@@ -17,7 +17,10 @@ getAllProducts = asyncHandler(async (req, res) => {
 // Public
 getProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const product = await Product.findById(id);
+  const product = await Products.findById(id);
+  if (!product) {
+    throw new Error("Product not found");
+  }
   res.status(200).json({ status: "success", data: product });
 });
 
@@ -40,7 +43,13 @@ createProduct = asyncHandler(async (req, res) => {
 // Private
 updateProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
+  // Checking to see if the product to be updated exists.
+  const product = await Products.findById(id);
+  if (!product) {
+    throw new Error("Product with the specified id not found");
+  }
   const updatedProduct = await Products.findByIdAndUpdate(id, req.body, {
+    new: true,
     runValidators: true,
   });
   if (!updatedProduct) {
@@ -55,7 +64,14 @@ updateProduct = asyncHandler(async (req, res) => {
 // DELETE /api/products/:id
 // Private
 deleteProduct = asyncHandler(async (req, res) => {
-  res.status(200).json({ status: "success", data: "Deleted product" });
+  const id = req.params.id;
+  const product = await Products.findById(id);
+  if (!product) {
+    throw new Error("Unable to delete product");
+  }
+
+  await Products.findByIdAndDelete(id);
+  res.status(200).json({ status: "success" });
 });
 
 const controllers = {
