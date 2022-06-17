@@ -4,6 +4,7 @@ const slugify = require("slugify");
 const productSchema = mongoose.Schema({
   name: {
     type: String,
+    unique: [true, "A product should have a Unique name"],
     required: [true, "A Product should have a name"],
     trim: true,
     minlength: [
@@ -28,6 +29,14 @@ const productSchema = mongoose.Schema({
       message: "The discount price should be lesser than the price",
     },
   },
+  category: {
+    type: [String],
+    required: [true, "Please include a category for the product"],
+    enum: {
+      values: ["Clothings", "Shoes", "Electronics", "Digital"],
+      message: "Values for category field should be between ({VALUE})",
+    },
+  },
   description: {
     type: String,
     required: [true, "Product should have a breif description"],
@@ -39,7 +48,7 @@ const productSchema = mongoose.Schema({
   },
   thumbnail: {
     type: String,
-    required: [true, "An image should have a valid thumbnail"],
+    required: [true, "A product should have a valid thumbnail"],
   },
   images: {
     type: [String],
