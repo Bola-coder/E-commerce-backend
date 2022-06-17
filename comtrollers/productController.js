@@ -1,11 +1,10 @@
 const asyncHandler = require("express-async-handler");
-const { update } = require("./../models/productModel");
 const Products = require("./../models/productModel");
 
 // Getting all products
 // GET /api/products
 // Public
-getAllProducts = asyncHandler(async (req, res) => {
+const getAllProducts = asyncHandler(async (req, res) => {
   const products = await Products.find();
   res
     .status(200)
@@ -15,11 +14,11 @@ getAllProducts = asyncHandler(async (req, res) => {
 // Getting single products
 // GET /api/products/:id
 // Public
-getProduct = asyncHandler(async (req, res) => {
+const getProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const product = await Products.findById(id);
   if (!product) {
-    throw new Error("Product not found");
+    throw new Error("Product with specified ID not found");
   }
   res.status(200).json({ status: "success", data: product });
 });
@@ -27,7 +26,7 @@ getProduct = asyncHandler(async (req, res) => {
 // Create new Product
 // POST /api/products
 // Private
-createProduct = asyncHandler(async (req, res) => {
+const createProduct = asyncHandler(async (req, res) => {
   if (!req.body) {
     throw new Error("Please fill in the appropraite fields.");
   }
@@ -41,7 +40,7 @@ createProduct = asyncHandler(async (req, res) => {
 // Update Single Product
 // PATCH /api/products/:id
 // Private
-updateProduct = asyncHandler(async (req, res) => {
+const updateProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
   // Checking to see if the product to be updated exists.
   const product = await Products.findById(id);
@@ -63,7 +62,7 @@ updateProduct = asyncHandler(async (req, res) => {
 // Delete Single Product
 // DELETE /api/products/:id
 // Private
-deleteProduct = asyncHandler(async (req, res) => {
+const deleteProduct = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const product = await Products.findById(id);
   if (!product) {
@@ -74,11 +73,24 @@ deleteProduct = asyncHandler(async (req, res) => {
   res.status(200).json({ status: "success" });
 });
 
+// Get a single Product using the slug
+// GET /api/products/:slug
+// Public
+const getProductBySlug = asyncHandler(async (req, res) => {
+  const slug = req.params.slug;
+  const product = await Products.find({ slug: slug });
+  if (!product) {
+    throw new Error("Can't find product with the specified slug");
+  }
+  res.status(200).json({ status: "success", data: product });
+});
+
 const controllers = {
   getAllProducts,
   getProduct,
   createProduct,
   updateProduct,
   deleteProduct,
+  getProductBySlug,
 };
 module.exports = controllers;
