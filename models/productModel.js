@@ -42,9 +42,13 @@ const productSchema = mongoose.Schema({
     required: [true, "Product should have a breif description"],
     trim: true,
   },
-  isAvailable: {
-    type: Boolean,
-    defualt: true,
+  // isAvailable: {
+  //   type: Boolean,
+  //   defualt: true,
+  // },
+  stock: {
+    type: Number,
+    required: [true, "Please Provide the quantity you have in stock"]
   },
   thumbnail: {
     type: String,

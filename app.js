@@ -1,7 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const productRoutes = require("./routes/productRoutes");
-const { handdleError } = require("./middlewares/errorHandler");
+const globalErrorHandler = require("./middlewares/errorHandler");
+const AppError = require("./utils/AppError");
 
 const app = express();
 
@@ -14,6 +15,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/products", productRoutes);
 
-app.use(handdleError);
+
+app.use('*', (req, res, next) => {
+  const error = new AppError(`Cant find ${req.originalUrl} on this server`, 404);
+  next(error)
+})
+
+app.use(globalErrorHandler);
+
 
 module.exports = app;
